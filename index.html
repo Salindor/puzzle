@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .puzzle {
+            width: 600px;
+            margin: 0 auto;
+            height: 600px;
+            border: 1px solid black;
+        }
+
+        .square {
+            width: 25%;
+            float: left;
+            outline: 1px solid green;
+            height: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="puzzle" id="puzzle">
+        <div class="square" data-number="1"><img src="images/image_part_001.jpg" alt=""></div>
+        <div class="square" data-number="2"><img src="images/image_part_002.jpg" alt=""></div>
+        <div class="square" data-number="3"><img src="images/image_part_003.jpg" alt=""></div>
+        <div class="square" data-number="4"><img src="images/image_part_004.jpg" alt=""></div>
+        <div class="square" data-number="5"><img src="images/image_part_005.jpg" alt=""></div>
+        <div class="square" data-number="6"><img src="images/image_part_006.jpg" alt=""></div>
+        <div class="square" data-number="7"><img src="images/image_part_007.jpg" alt=""></div>
+        <div class="square" data-number="8"><img src="images/image_part_008.jpg" alt=""></div>
+        <div class="square" data-number="9"><img src="images/image_part_009.jpg" alt=""></div>
+        <div class="square" data-number="10"><img src="images/image_part_010.jpg" alt=""></div>
+        <div class="square" data-number="11"><img src="images/image_part_011.jpg" alt=""></div>
+        <div class="square" data-number="12"><img src="images/image_part_012.jpg" alt=""></div>
+        <div class="square" data-number="13"><img src="images/image_part_013.jpg" alt=""></div>
+        <div class="square" data-number="14"><img src="images/image_part_014.jpg" alt=""></div>
+        <div class="square" data-number="15"><img src="images/image_part_015.jpg" alt=""></div>
+        <div class="square"><img src="images/image_part_016.jpg" alt=""></div>
+    </div>
+    <script>
+        var puzzle = function(){
+            this.params = {
+                selector: '#puzzle',
+                squares: '.square'
+            };
+        };
+
+        puzzle.prototype.init = function(){
+            this.randomize();
+        };
+
+        puzzle.prototype.randomize = function(){
+            var scope = this;
+
+            var box = document.querySelector(scope.params.selector);
+
+            for (var i = box.children.length; i >= 0; i-- ) {
+                var number = Math.random() * i | 0;
+                box.appendChild(box.children[number]);
+            };
+        };
+
+        puzzle.check = function() {
+
+        }
+
+        var game = new puzzle;
+        game.init();
+    </script>
+</body>
+</html>

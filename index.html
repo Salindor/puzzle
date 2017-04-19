@@ -16,6 +16,14 @@
             float: left;
             outline: 1px solid green;
             height: 150px;
+            transition: 0.2s all;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .square.active {
+            outline: 2px solid red;
+            z-index: 1;
         }
     </style>
 </head>
@@ -36,18 +44,29 @@
         <div class="square" data-number="13"><img src="images/image_part_013.jpg" alt=""></div>
         <div class="square" data-number="14"><img src="images/image_part_014.jpg" alt=""></div>
         <div class="square" data-number="15"><img src="images/image_part_015.jpg" alt=""></div>
-        <div class="square"><img src="images/image_part_016.jpg" alt=""></div>
+        <div class="square"></div>
     </div>
     <script>
         var puzzle = function(){
             this.params = {
                 selector: '#puzzle',
-                squares: '.square'
+                square: '.square'
             };
         };
 
         puzzle.prototype.init = function(){
+            var box = document.querySelector(this.params.selector);
+
+            // NOTE: Let's add click events.
+            for (var i = box.children.length - 1; i >= 0; i-- ) {
+                box.children[i].addEventListener('click', function(){
+                   this.classList.toggle('active');
+                });
+            }
+
+            // NOTE: Let's randomize the blocks.
             this.randomize();
+
         };
 
         puzzle.prototype.randomize = function(){
@@ -55,7 +74,7 @@
 
             var box = document.querySelector(scope.params.selector);
 
-            for (var i = box.children.length; i >= 0; i-- ) {
+            for (var i = box.children.length - 1; i >= 0; i-- ) {
                 var number = Math.random() * i | 0;
                 box.appendChild(box.children[number]);
             };

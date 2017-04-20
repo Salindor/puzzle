@@ -49,39 +49,38 @@
     <script>
         var puzzle = function(){
             this.params = {
-                selector: '#puzzle',
+                box: document.getElementById('puzzle'),
                 square: '.square'
             };
         };
 
         puzzle.prototype.init = function(){
-            var box = document.querySelector(this.params.selector);
-
+            var scope = this;
             // NOTE: Let's add click events.
-            for (var i = box.children.length - 1; i >= 0; i-- ) {
-                box.children[i].addEventListener('click', function(){
-                   this.classList.toggle('active');
+            for (var i = this.params.box.children.length - 1; i >= 0; i-- ) {
+                this.params.box.children[i].addEventListener('click', function(){
+                    scope.deacivateAll();
+                    this.classList.toggle('active');
                 });
             }
 
             // NOTE: Let's randomize the blocks.
             this.randomize();
-
         };
 
         puzzle.prototype.randomize = function(){
             var scope = this;
 
-            var box = document.querySelector(scope.params.selector);
-
-            for (var i = box.children.length - 1; i >= 0; i-- ) {
+            for (var i = this.params.box.children.length - 1; i >= 0; i-- ) {
                 var number = Math.random() * i | 0;
-                box.appendChild(box.children[number]);
+                this.params.box.appendChild(this.params.box.children[number]);
             };
         };
 
-        puzzle.check = function() {
-
+        puzzle.prototype.deacivateAll = function(){
+            for (var i = this.params.box.children.length - 1; i >= 0; i-- ) {
+               this.params.box.children[i].classList.remove('active');
+            }
         }
 
         var game = new puzzle;

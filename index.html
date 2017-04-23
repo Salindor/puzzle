@@ -16,7 +16,6 @@
             float: left;
             outline: 1px solid green;
             height: 150px;
-            transition: 0.2s all;
             position: relative;
             cursor: pointer;
         }
@@ -29,43 +28,64 @@
 </head>
 <body>
     <div class="puzzle" id="puzzle">
-        <div class="square" data-number="1"><img src="images/image_part_001.jpg" alt=""></div>
-        <div class="square" data-number="2"><img src="images/image_part_002.jpg" alt=""></div>
-        <div class="square" data-number="3"><img src="images/image_part_003.jpg" alt=""></div>
-        <div class="square" data-number="4"><img src="images/image_part_004.jpg" alt=""></div>
-        <div class="square" data-number="5"><img src="images/image_part_005.jpg" alt=""></div>
-        <div class="square" data-number="6"><img src="images/image_part_006.jpg" alt=""></div>
-        <div class="square" data-number="7"><img src="images/image_part_007.jpg" alt=""></div>
-        <div class="square" data-number="8"><img src="images/image_part_008.jpg" alt=""></div>
-        <div class="square" data-number="9"><img src="images/image_part_009.jpg" alt=""></div>
-        <div class="square" data-number="10"><img src="images/image_part_010.jpg" alt=""></div>
-        <div class="square" data-number="11"><img src="images/image_part_011.jpg" alt=""></div>
-        <div class="square" data-number="12"><img src="images/image_part_012.jpg" alt=""></div>
-        <div class="square" data-number="13"><img src="images/image_part_013.jpg" alt=""></div>
-        <div class="square" data-number="14"><img src="images/image_part_014.jpg" alt=""></div>
-        <div class="square" data-number="15"><img src="images/image_part_015.jpg" alt=""></div>
-        <div class="square"></div>
+        <div class="square" data-number="1"><img data-image="1" src="images/image_part_001.jpg" alt=""></div>
+        <div class="square" data-number="2"><img data-image="2" src="images/image_part_002.jpg" alt=""></div>
+        <div class="square" data-number="3"><img data-image="3" src="images/image_part_003.jpg" alt=""></div>
+        <div class="square" data-number="4"><img data-image="4" src="images/image_part_004.jpg" alt=""></div>
+        <div class="square" data-number="5"><img data-image="5" src="images/image_part_005.jpg" alt=""></div>
+        <div class="square" data-number="6"><img data-image="6" src="images/image_part_006.jpg" alt=""></div>
+        <div class="square" data-number="7"><img data-image="7" src="images/image_part_007.jpg" alt=""></div>
+        <div class="square" data-number="8"><img data-image="8" src="images/image_part_008.jpg" alt=""></div>
+        <div class="square" data-number="9"><img data-image="9" src="images/image_part_009.jpg" alt=""></div>
+        <div class="square" data-number="10"><img data-image="10" src="images/image_part_010.jpg" alt=""></div>
+        <div class="square" data-number="11"><img data-image="11" src="images/image_part_011.jpg" alt=""></div>
+        <div class="square" data-number="12"><img data-image="12" src="images/image_part_012.jpg" alt=""></div>
+        <div class="square" data-number="13"><img data-image="13" src="images/image_part_013.jpg" alt=""></div>
+        <div class="square" data-number="14"><img data-image="14" src="images/image_part_014.jpg" alt=""></div>
+        <div class="square" data-number="15"><img data-image="15" src="images/image_part_015.jpg" alt=""></div>
+        <div class="square" data-number="16"></div>
     </div>
     <script>
         var puzzle = function(){
             this.params = {
                 box: document.getElementById('puzzle'),
-                square: '.square'
+                square: '.square',
+                neighbourPicked: 0
             };
         };
 
         puzzle.prototype.init = function(){
             var scope = this;
+            var squarePicked = 0;
+            var image;
+            var square;
             // NOTE: Let's add click events.
             for (var i = this.params.box.children.length - 1; i >= 0; i-- ) {
                 this.params.box.children[i].addEventListener('click', function(){
-                    scope.deacivateAll();
-                    this.classList.toggle('active');
+                    if (squarePicked) {
+                        scope.checkIfNeighbour(this, square);
+
+                        if (image && !this.firstChild && scope.params.neighbourPicked) {
+                            this.appendChild(image);
+                        }
+                        scope.deacivateAll();
+                        squarePicked = 0;
+                    } else {
+                        scope.deacivateAll();
+                        this.classList.toggle('active');
+                        squarePicked = 1;
+                        square = this;
+                        image = this.children[0];
+                    }
+
+                    // NOTE: Check if match.
+                    scope.checkMatch();
                 });
             }
 
             // NOTE: Let's randomize the blocks.
             this.randomize();
+
         };
 
         puzzle.prototype.randomize = function(){
@@ -81,6 +101,36 @@
             for (var i = this.params.box.children.length - 1; i >= 0; i-- ) {
                this.params.box.children[i].classList.remove('active');
             }
+        }
+
+        puzzle.prototype.checkIfNeighbour = function(el, elActive){
+            var elNumber = [].indexOf.call(this.params.box.children, el) + 1;
+            var elNumberActive = [].indexOf.call(this.params.box.children, elActive) + 1;
+            var neighbours = [elNumberActive + 1, elNumberActive -1, elNumberActive + 4, elNumberActive - 4];
+
+            if (neighbours.includes(elNumber)) {
+                this.params.neighbourPicked = 1;
+            } else {
+                this.params.neighbourPicked = 0;
+            }
+        }
+
+        puzzle.prototype.checkMatch = function() {
+            var user = [];
+            var sorted = 1;
+            for (var i = 0; this.params.box.children.length > i; i++ ) {
+               user.push(this.params.box.children[i].dataset.number);
+            }
+
+            for (var i = 0; i < user.length; i ++) {
+                if (user[i] > user[i+1]) {
+                    sorted = 0;
+                    break;
+                }
+            }
+
+            console.log(user);
+            console.log(sorted);
         }
 
         var game = new puzzle;
